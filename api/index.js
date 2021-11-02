@@ -6,6 +6,7 @@ const exitHook = require('async-exit-hook');
 const albums = require('./app/albums');
 const artists = require('./app/artists');
 const tracks = require('./app/tracks');
+const users = require('./app/users');
 
 const app = express();
 app.use(express.json());
@@ -17,6 +18,7 @@ const port = 8000;
 app.use('/albums', albums);
 app.use('/artists', artists);
 app.use('/tracks', tracks);
+app.use('/users', users);
 
 const run = async () => {
     await mongoose.connect('mongodb://localhost/music');
