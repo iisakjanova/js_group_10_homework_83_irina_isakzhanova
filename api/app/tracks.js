@@ -37,4 +37,25 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.post('/', async (req, res) => {
+    if (!req.body.title || !req.body.album) {
+        return res.status(400).send('Data is not valid');
+    }
+
+    const trackData = {
+        title: req.body.title,
+        album: req.body.album,
+        duration: req.body.duration || null,
+    };
+
+    const track = new Track(trackData);
+
+    try {
+        await track.save();
+        res.send(track);
+    } catch (e) {
+        res.status(400).send(e);
+    }
+});
+
 module.exports = router;

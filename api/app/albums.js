@@ -55,12 +55,9 @@ router.post('/', upload.single('image'), async (req, res) => {
 
     const albumData = {
         title: req.body.title,
-        artist: req.body.artist
+        artist: req.body.artist,
+        year: req.body.year || null,
     };
-
-    if (req.body.year) {
-        albumData.year = req.body.year;
-    }
 
     if (req.file) {
         albumData.image = req.file.filename;
