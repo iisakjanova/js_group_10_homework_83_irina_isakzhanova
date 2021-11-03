@@ -1,7 +1,5 @@
 const express = require('express');
-
 const Track = require("../models/Track");
-const Album = require('../models/Album');
 
 const router = express.Router();
 
@@ -13,27 +11,27 @@ router.get('/', async (req, res) => {
             query.album = req.query.album;
         }
 
-        let tracks = [];
+        let tracks;
 
         if (req.query.artist) {
-            query.artist = req.query.artist;
-            const albums = await Album.find(query).populate('artist', 'title');
-
-            await Promise.all(albums.map(async album => {
-                const albumTracks = await Track.find({album: album._id}).populate('album', 'title');
-
-                if (albumTracks.length > 0) {
-                    tracks = [...tracks, ...albumTracks];
+            const tracksArtist = await Track.find().populate({
+                path: 'album',
+                match: {
+                    artist: req.query.artist
+                },
+                populate: {
+                    path: 'artist'
                 }
-            }));
+            });
 
+            tracks = tracksArtist.filter(item => item.album !== null);
             return res.send(tracks);
         }
 
         tracks = await Track.find(query).populate('album', 'title');
         res.send(tracks);
     } catch (e) {
-        res.sendStatus(500);
+        return res.sendStatus(500);
     }
 });
 
@@ -54,7 +52,7 @@ router.post('/', async (req, res) => {
         await track.save();
         res.send(track);
     } catch (e) {
-        res.status(400).send(e);
+        return res.status(400).send(e);
     }
 });
 
